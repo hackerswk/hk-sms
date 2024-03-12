@@ -1,0 +1,21 @@
+{
+    "name": "stanleysie/hk-sms",
+    "description": "The sms service of paasoo.",
+    "type": "library",
+    "require": {
+        "php": "^7.2"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Stanleysie\\HkSms\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Stanley Sie",
+            "email": "swookon@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
