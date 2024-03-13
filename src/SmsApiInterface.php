@@ -65,4 +65,27 @@ class SmsApiInterface
     {
         return SmsApi::getValidNumber($key, $secret, $countryCode, $nationalNumber);
     }
+
+    /**
+     * Add invalid phone number to blacklist using parameters.
+     *
+     * @param string $countryCode     Country code
+     * @param string $nationalNumber  National number
+     * @return array                  Response data
+     */
+    public static function addToBlacklist($countryCode, $nationalNumber)
+    {
+    }
+
+    /**
+     * Check if phone number is in the blacklist using parameters.
+     *
+     * @param string $countryCode     Country code
+     * @param string $nationalNumber  National number
+     * @return array                  Response data
+     */
+    public static function isInBlacklist($countryCode, $nationalNumber)
+    {
+    }
 }
+?>
