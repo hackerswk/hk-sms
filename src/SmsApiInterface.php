@@ -71,7 +71,7 @@ class SmsApiInterface
      *
      * @param string $countryCode     Country code
      * @param string $nationalNumber  National number
-     * @return array                  Response data
+     * @return bool                   True if the number was successfully added to the blacklist, otherwise false
      */
     public static function addToBlacklist($countryCode, $nationalNumber)
     {
@@ -82,7 +82,7 @@ class SmsApiInterface
      *
      * @param string $countryCode     Country code
      * @param string $nationalNumber  National number
-     * @return array                  Response data
+     * @return bool                   True if the number was successfully added to the blacklist, otherwise false
      */
     public static function isInBlacklist($countryCode, $nationalNumber)
     {
