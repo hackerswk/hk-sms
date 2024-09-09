@@ -1,0 +1,36 @@
+<?php
+require '../vendor/autoload.php';
+
+use \PDO;
+use Stanleysie\HkHelper\SmsVerify;
+
+// Step 1: Create a PDO instance
+$dsn = 'mysql:host=localhost;dbname=your_database;charset=utf8mb4';
+$username = 'your_username';
+$password = 'your_password';
+
+try {
+    $pdo = new PDO($dsn, $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('Database connection failed: ' . $e->getMessage());
+}
+
+// Step 2: Instantiate the SmsVerify class
+$smsVerify = new SmsVerify($pdo);
+
+// Step 3: Prepare the data to update
+$id = 1; // The ID of the record you want to update
+$data = [
+    'verification_code' => '123456',
+    'verify_status' => 1, // 1 indicates success
+    'verified_at' => (new DateTime())->format('Y-m-d H:i:s') // Current timestamp
+];
+
+// Step 4: Call the update method
+try {
+    $affectedRows = $smsVerify->update($id, $data);
+    echo "Number of affected rows: " . $affectedRows;
+} catch (PDOException $e) {
+    echo "Update failed: " . $e->getMessage();
+}
