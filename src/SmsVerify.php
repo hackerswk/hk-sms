@@ -32,24 +32,31 @@ class SmsVerify
     }
 
     /**
-     * Insert a new SMS verification record
+     * Inserts a new record into the sms_verify table with the provided details.
      *
-     * @param int $smsSendId ID of the related SMS send record
-     * @param string $verificationCode 7-digit verification code
-     * @param int $verifyStatus Verification status (0: not verified, 1: success, 2: failed)
-     * @return int Last inserted ID
-     * @throws PDOException If there is an error with the database query
+     * @param int    $smsSendId         The ID associated with the SMS send.
+     * @param string $verificationCode   The verification code to store.
+     * @param int    $verifyStatus       The verification status (e.g., 0 or 1).
+     * @param int    $expiryMinutes      The number of minutes after which the code expires. Default is 10.
+     *
+     * @return int                       The last inserted ID.
+     *
+     * @throws PDOException              If a database error occurs during insertion.
      */
-    public function insert($smsSendId, $verificationCode, $verifyStatus)
+    public function insert($smsSendId, $verificationCode, $verifyStatus, $expiryMinutes = 10)
     {
-        $sql = "INSERT INTO sms_verify (sms_send_id, verification_code, verify_status)
-                VALUES (:sms_send_id, :verification_code, :verify_status)";
+        // 計算到期時間
+        $expiredAt = date('Y-m-d H:i:s', strtotime("+$expiryMinutes minutes"));
+
+        $sql = "INSERT INTO sms_verify (sms_send_id, verification_code, verify_status, expired_at)
+            VALUES (:sms_send_id, :verification_code, :verify_status, :expired_at)";
         try {
             $stmt = $this->database->prepare($sql);
             $stmt->execute([
                 ':sms_send_id' => $smsSendId,
                 ':verification_code' => $verificationCode,
                 ':verify_status' => $verifyStatus,
+                ':expired_at' => $expiredAt,
             ]);
             return $this->database->lastInsertId();
         } catch (PDOException $e) {
