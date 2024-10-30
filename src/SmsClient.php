@@ -114,4 +114,53 @@ class SmsClient
 
         return $result;
     }
+
+    /**
+     * 發送 GET 請求至指定 API
+     *
+     * @param string $endpoint     API 路徑
+     * @param array  $params       發送的 GET 參數
+     * @return array               API 返回結果
+     * @throws \Exception
+     */
+    protected function getRequest(string $endpoint, array $params = []): array
+    {
+        $url = $this->apiUrl . $endpoint . '?' . http_build_query($params);
+
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded',
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($response === false) {
+            throw new \Exception('cURL error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        $result = json_decode($response, true);
+
+        if ($httpCode !== 200 || !$result || !isset($result['success'])) {
+            throw new \Exception('API request failed: ' . ($result['message'] ?? 'Unknown error'));
+        }
+
+        return $result;
+    }
+
+    /**
+     * 執行 Cron 任務
+     *
+     * @param array $params 附加的查詢參數（如果需要）
+     * @return array       返回結果數組
+     * @throws \Exception
+     */
+    public function executeCron(array $params = []): array
+    {
+        return $this->getRequest('/cron', $params);
+    }
 }

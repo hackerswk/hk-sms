@@ -80,3 +80,34 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage(); // Handle the exception
 }
+
+========================================================================================================
+
+--- execute cron sample ---
+
+$smsClient = new SmsClient();
+
+try {
+    // Call executeCron without parameters
+    $response = $smsClient->executeCron();
+
+    // Output the response
+    echo "Cron Execution Response:\n";
+    print_r($response);
+
+    // If you have specific parameters to pass
+    $params = [
+        'param1' => 'value1',
+        'param2' => 'value2',
+    ];
+
+    // Call executeCron with parameters
+    $responseWithParams = $smsClient->executeCron($params);
+
+    // Output the response with parameters
+    echo "Cron Execution Response with Params:\n";
+    print_r($responseWithParams);
+} catch (\Exception $e) {
+    // Handle any exceptions that may occur
+    echo 'Error: ' . $e->getMessage();
+}
