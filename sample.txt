@@ -47,7 +47,7 @@ $smsVerify = new SmsVerify($pdo);
 $smsClient = new SmsClient(); // Make sure to implement SmsClient accordingly
 
 // Create an instance of OtpApi
-$otpApi = new OtpApi($smsVerify, $smsClient);
+$otpApi = new OtpApi($pdo);
 
 // Sample parameters
 $merchantName = 'holkee'; // The merchant name you want to look up
