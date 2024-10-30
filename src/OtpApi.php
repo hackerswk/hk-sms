@@ -21,13 +21,14 @@ class OtpApi
     /**
      * Constructor to initialize dependencies.
      *
-     * @param SmsVerify $smsVerify Instance of SmsVerify for verification operations.
+     * @param \PDO $pdo Database connection instance.
      * @param SmsClient $smsClient Instance of SmsClient for SMS operations.
      */
-    public function __construct(SmsVerify $smsVerify, SmsClient $smsClient)
+    public function __construct(\PDO $pdo)
     {
-        $this->smsVerify = $smsVerify;
-        $this->smsClient = $smsClient;
+        // Initialize SmsVerify with PDO instance
+        $this->smsVerify = new SmsVerify($pdo);
+        $this->smsClient = new SmsClient();
     }
 
     /**
