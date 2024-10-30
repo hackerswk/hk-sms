@@ -138,4 +138,94 @@ class SmsVerify
         // Generate a random number between 1000000 and 9999999 (7 digits)
         return str_pad(random_int(0, 9999999), 7, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Selects the first region associated with a merchant.
+     *
+     * @param int $merchantId The merchant ID.
+     * @return array|null     The first merchant region or null if not found.
+     * @throws PDOException   If there is a database error.
+     */
+    public function selectMerchantRegion(int $merchantId): ?array
+    {
+        $sql = "SELECT * FROM merchant_region WHERE merchant_id = :merchant_id LIMIT 1";
+        try {
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([':merchant_id' => $merchantId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            throw new PDOException("Database query error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Inserts a new record into the sms_send table.
+     *
+     * @param int    $merchantId   The merchant ID.
+     * @param int    $regionId     The region ID.
+     * @param string $mobile       The mobile number to send the SMS.
+     * @param string $content      The content of the SMS.
+     * @param int    $status       The status of the SMS (e.g., 0 for unsent, 1 for sent).
+     * @param int    $smsType      The SMS type (default is 0).
+     * @return int                 The last inserted ID.
+     * @throws PDOException        If a database error occurs during insertion.
+     */
+    public function insertSmsSend(int $merchantId, int $regionId, string $mobile, string $content, int $status, int $smsType = 0): int
+    {
+        $sql = "INSERT INTO sms_send (merchant_id, region_id, mobile, content, status, sms_type, sent_time)
+                VALUES (:merchant_id, :region_id, :mobile, :content, :status, :sms_type, CURRENT_TIMESTAMP)";
+
+        try {
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([
+                ':merchant_id' => $merchantId,
+                ':region_id' => $regionId,
+                ':mobile' => $mobile,
+                ':content' => $content,
+                ':status' => $status,
+                ':sms_type' => $smsType,
+            ]);
+            return $this->database->lastInsertId();
+        } catch (PDOException $e) {
+            throw new PDOException("Database insert error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Selects a merchant by its name.
+     *
+     * @param string $merchantName The name of the merchant.
+     * @return array|null          The merchant record or null if not found.
+     * @throws PDOException        If there is a database error.
+     */
+    public function selectMerchantByName(string $merchantName): ?array
+    {
+        $sql = "SELECT * FROM merchants WHERE merchant_name = :merchant_name LIMIT 1";
+        try {
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([':merchant_name' => $merchantName]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            throw new PDOException("Database query error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Selects the first region by its region code.
+     *
+     * @param int $regionCode The code of the region.
+     * @return array|null     The region record or null if not found.
+     * @throws PDOException   If there is a database error.
+     */
+    public function selectFirstRegionByCode(int $regionCode): ?array
+    {
+        $sql = "SELECT * FROM regions WHERE region_code = :region_code LIMIT 1";
+        try {
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([':region_code' => $regionCode]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            throw new PDOException("Database query error: " . $e->getMessage());
+        }
+    }
 }

@@ -1,4 +1,4 @@
-<?php
+--- update sample ---
 require '../vendor/autoload.php';
 
 use \PDO;
@@ -33,4 +33,50 @@ try {
     echo "Number of affected rows: " . $affectedRows;
 } catch (PDOException $e) {
     echo "Update failed: " . $e->getMessage();
+}
+
+=======================================================================================
+
+--- opt api sample ---
+
+// Assume we have a PDO instance for database connection
+$pdo = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
+
+// Create instances of SmsVerify and SmsClient
+$smsVerify = new SmsVerify($pdo);
+$smsClient = new SmsClient(); // Make sure to implement SmsClient accordingly
+
+// Create an instance of OtpApi
+$otpApi = new OtpApi($smsVerify, $smsClient);
+
+// Sample parameters
+$merchantName = 'holkee'; // The merchant name you want to look up
+$regionCode = 886; // The region code for Taiwan
+
+// Step 1: Get merchant ID by name
+$merchant = $smsVerify->selectMerchantByName($merchantName);
+if ($merchant === null) {
+    throw new Exception("Merchant not found with name: $merchantName");
+}
+$merchantId = $merchant['id']; // Assuming the merchant table has an 'id' field
+
+// Step 2: Get region ID by region code
+$region = $smsVerify->selectFirstRegionByCode($regionCode);
+if ($region === null) {
+    throw new Exception("Region not found with code: $regionCode");
+}
+$regionId = $region['region_id']; // Assuming the regions table has a 'region_id' field
+
+// Sample SMS parameters
+$countryCode = 'TW'; // Country code for Taiwan
+$mobile = '0912345678'; // Recipient's mobile number
+$smsType = 0; // SMS type (default is 0)
+$content = null; // Custom content for the SMS (optional)
+
+// Execute the SMS process
+try {
+    $result = $otpApi->executeSms($countryCode, $mobile, $merchantId, $regionId, $smsType, $content);
+    print_r($result); // Output the result
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage(); // Handle the exception
 }
