@@ -72,10 +72,11 @@ $countryCode = 'TW'; // Country code for Taiwan
 $mobile = '0912345678'; // Recipient's mobile number
 $smsType = 0; // SMS type (default is 0)
 $content = null; // Custom content for the SMS (optional)
+$expiryMinutes = 10; // Custom expiry time
 
 // Execute the SMS process
 try {
-    $result = $otpApi->executeSms($countryCode, $mobile, $merchantId, $regionId, $smsType, $content);
+    $result = $otpApi->executeSms($countryCode, $mobile, $merchantId, $regionId, $smsType, $content, $expiryMinutes);
     print_r($result); // Output the result
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage(); // Handle the exception
