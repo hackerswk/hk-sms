@@ -200,7 +200,7 @@ class SmsVerify
      */
     public function selectMerchantByName(string $merchantName): ?array
     {
-        $sql = "SELECT * FROM merchants WHERE merchant_name = :merchant_name LIMIT 1";
+        $sql = "SELECT * FROM merchant WHERE merchant_name = :merchant_name LIMIT 1";
         try {
             $stmt = $this->database->prepare($sql);
             $stmt->execute([':merchant_name' => $merchantName]);
