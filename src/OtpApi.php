@@ -63,6 +63,7 @@ class OtpApi
 
         return [
             'sms_send_id' => $smsSendId,
+            'insertId' => $insertId,
             'verification_code' => $verificationCode,
             'status' => 'pending',
             'expiry' => $expiryMinutes,
