@@ -228,4 +228,23 @@ class SmsVerify
             throw new PDOException("Database query error: " . $e->getMessage());
         }
     }
+
+    /**
+     * Retrieves all region codes from the regions table.
+     *
+     * @return array List of region codes.
+     * @throws PDOException If there is a database error.
+     */
+    public function getAllRegionCodes(): array
+    {
+        $sql = "SELECT region_code FROM regions";
+        try {
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute();
+            // Fetch all region codes as a simple array
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            throw new PDOException("Database query error: " . $e->getMessage());
+        }
+    }
 }
