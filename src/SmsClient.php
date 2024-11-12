@@ -19,17 +19,18 @@ class SmsClient
      * @param string $content       短信內容
      * @param string $countryCode   國家代碼
      * @param string $mobile        手機號碼
+     * @param array  $merchantData  商戶驗證數據
      * @param int    $smsType       短信類型 (默認為 0)
      * @return array                返回結果數組
      */
-    public function sendSms(string $content, string $countryCode, string $mobile, int $smsType = 0): array
+    public function sendSms(string $content, string $countryCode, string $mobile, array $merchantData, int $smsType = 0): array
     {
         return $this->postRequest('/send', [
             'content' => $content,
             'country_code' => $countryCode,
             'mobile' => $mobile,
             'sms_type' => $smsType,
-        ]);
+        ], $merchantData['auth_key'], $merchantData['auth_token']);
     }
 
     /**
@@ -40,10 +41,7 @@ class SmsClient
      */
     public function getBalance(array $merchantData): array
     {
-        return $this->postRequest('/balance', [
-            'merchant_id' => $merchantData['merchant_id'],
-            'api_token' => $merchantData['api_token'],
-        ]);
+        return $this->postRequest('/balance', [], $merchantData['auth_key'], $merchantData['auth_token']);
     }
 
     /**
@@ -57,9 +55,7 @@ class SmsClient
     {
         return $this->postRequest('/status', [
             'message_id' => $messageId,
-            'merchant_id' => $merchantData['merchant_id'],
-            'api_token' => $merchantData['api_token'],
-        ]);
+        ], $merchantData['auth_key'], $merchantData['auth_token']);
     }
 
     /**
