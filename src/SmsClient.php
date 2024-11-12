@@ -66,13 +66,15 @@ class SmsClient
      * 檢查手機號碼
      *
      * @param string $mobile       手機號碼
+     * @param string $countryCode  國碼
      * @param array  $merchantData 商戶驗證數據
      * @return array               返回結果數組
      */
-    public function checkMobile(string $mobile, array $merchantData): array
+    public function checkMobile(string $mobile, string $countryCode, array $merchantData): array
     {
         return $this->postRequest('/check_mobile', [
             'mobile' => $mobile,
+            'country_code' => $countryCode,
             'merchant_id' => $merchantData['merchant_id'],
             'api_token' => $merchantData['api_token'],
         ]);
