@@ -96,33 +96,20 @@ class SmsVerify
         // 強制將 id 轉換為整數
         $id = (int) $id;
         $setClause = [];
-        $params = [];
 
-        // 生成 SET 子句並綁定每個參數
         foreach ($data as $key => $value) {
             $setClause[] = "$key = :$key";
             $params[":$key"] = $value;
         }
-
-        // 最終的 SQL 查詢
+        $params = [':id' => $id];
         $sql = "UPDATE sms_verify SET " . implode(', ', $setClause) . " WHERE id = :id";
 
+        // 打印出 SQL 語句和參數
+        echo $sql . "\n";
+        var_dump($params);
         try {
-            // 準備 SQL 語句
             $stmt = $this->database->prepare($sql);
-
-            // 綁定每個參數
-            foreach ($params as $key => &$value) {
-                $stmt->bindParam($key, $value);
-            }
-
-            // 綁定 id 參數
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-            // 執行更新操作
-            $stmt->execute();
-
-            // 返回受影響的行數
+            $stmt->execute($params);
             return $stmt->rowCount();
         } catch (PDOException $e) {
             throw new PDOException("Database update error: " . $e->getMessage());
