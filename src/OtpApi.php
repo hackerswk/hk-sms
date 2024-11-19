@@ -71,7 +71,6 @@ class OtpApi
             'sms_send_id' => $smsSendId,
             'verification_code' => $verificationCode,
             'verify_status' => $verifyStatus,
-            'expired_at' => $expiredAt,
         ];
         $insertId = $this->smsClient->createSmsVerify($data, $merchantData);
 
