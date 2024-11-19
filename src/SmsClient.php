@@ -214,9 +214,9 @@ class SmsClient
      * @param array $merchantData 商戶驗證數據
      * @return array 返回結果數組
      */
-    public function updateSmsVerify(int $id, array $data, array $merchantData): array
+    public function updateSmsVerify(array $data, array $merchantData): array
     {
-        return $this->putRequest("/sms-verify/{$id}", $data, $merchantData['auth_key'], $merchantData['auth_token']);
+        return $this->postRequest("/update-sms-verify", $data, $merchantData['auth_key'], $merchantData['auth_token']);
     }
 
     /**
