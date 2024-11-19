@@ -93,6 +93,8 @@ class SmsVerify
      */
     public function update($id, array $data)
     {
+        // 強制將 id 轉換為整數
+        $id = (int) $id;
         $setClause = [];
         $params = [':id' => $id];
         foreach ($data as $key => $value) {
