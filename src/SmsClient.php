@@ -216,7 +216,7 @@ class SmsClient
      */
     public function updateSmsVerify(int $id, array $data, array $merchantData): array
     {
-        return $this->postRequest("/sms-verify/{$id}", $data, $merchantData['auth_key'], $merchantData['auth_token']);
+        return $this->putRequest("/sms-verify/{$id}", $data, $merchantData['auth_key'], $merchantData['auth_token']);
     }
 
     /**
@@ -255,5 +255,62 @@ class SmsClient
 
         // 調用發送請求
         return $this->postRequest('/sms-send', $data, $merchantData['auth_key'], $merchantData['auth_token']);
+    }
+
+    /**
+     * Send a PUT request to the specified API endpoint.
+     *
+     * @param string $endpoint The API endpoint to send the request to.
+     * @param array $data The data to be sent in the request body.
+     * @param string $auth_key The authentication key for the API.
+     * @param string $auth_token The authentication token for the API.
+     *
+     * @return array The response from the API, decoded from JSON.
+     *
+     * @throws \Exception If the cURL request fails or the API response indicates an error.
+     */
+    protected function putRequest(
+        string $endpoint,
+        array $data,
+        string $auth_key,
+        string $auth_token
+    ): array {
+        // Encode auth_key and auth_token to Base64 format
+        $credentials = base64_encode($auth_key . ':' . $auth_token);
+
+        // Initialize cURL
+        $ch = curl_init($this->apiUrl . $endpoint);
+
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // Use PUT request method
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // Send the data
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded', // Set content type
+            'Authorization: Basic ' . $credentials, // Add Authorization header
+        ]);
+
+        // Execute cURL request
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Get HTTP status code
+
+        // Error handling
+        if ($response === false) {
+            throw new \Exception('cURL error: ' . curl_error($ch));
+        }
+
+        // Close cURL connection
+        curl_close($ch);
+
+        // Decode JSON response
+        $result = json_decode($response, true);
+
+        // Check HTTP status code and response result
+        if ($httpCode !== 200 || !$result || !isset($result['success'])) {
+            throw new \Exception('API request failed: ' . ($result['error_msg'] ?? 'Unknown error'));
+        }
+
+        // Return processed result
+        return $result;
     }
 }
