@@ -95,18 +95,9 @@ class SmsVerify
     {
         // 強制將 id 轉換為整數
         $id = (int) $id;
-        $setClause = [];
+        $params = ['verify_status' => (int) $data['verify_status'], 'verified_at' => $data['verified_at'], ':id' => $id];
+        $sql = "UPDATE sms_verify SET verify_status = :verify_status, verified_at = :verified_at WHERE id = :id";
 
-        foreach ($data as $key => $value) {
-            $setClause[] = "$key = :$key";
-            $params[":$key"] = $value;
-        }
-        $params = [':id' => $id];
-        $sql = "UPDATE sms_verify SET " . implode(', ', $setClause) . " WHERE id = :id";
-
-        // 打印出 SQL 語句和參數
-        echo $sql . "\n";
-        var_dump($params);
         try {
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
