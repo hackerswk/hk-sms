@@ -171,4 +171,53 @@ class SmsClient
     {
         return $this->getRequest('/cron', $params);
     }
+
+    /**
+     * 創建 SMS 驗證記錄
+     *
+     * @param array $data 短信驗證數據
+     * @param array $merchantData 商戶驗證數據
+     * @return array 返回結果數組
+     */
+    public function createSmsVerify(array $data, array $merchantData): array
+    {
+        return $this->postRequest('/sms-verify', $data, $merchantData['auth_key'], $merchantData['auth_token']);
+    }
+
+    /**
+     * 獲取 SMS 驗證記錄
+     *
+     * @param int $id 短信驗證記錄的 ID
+     * @param array $merchantData 商戶驗證數據
+     * @return array 返回結果數組
+     */
+    public function readSmsVerify(int $id, array $merchantData): array
+    {
+        return $this->getRequest("/sms-verify/{$id}", [], $merchantData['auth_key'], $merchantData['auth_token']);
+    }
+
+    /**
+     * 更新 SMS 驗證記錄
+     *
+     * @param int $id 短信驗證記錄的 ID
+     * @param array $data 要更新的數據
+     * @param array $merchantData 商戶驗證數據
+     * @return array 返回結果數組
+     */
+    public function updateSmsVerify(int $id, array $data, array $merchantData): array
+    {
+        return $this->postRequest("/sms-verify/{$id}", $data, $merchantData['auth_key'], $merchantData['auth_token']);
+    }
+
+    /**
+     * 刪除 SMS 驗證記錄
+     *
+     * @param int $id 短信驗證記錄的 ID
+     * @param array $merchantData 商戶驗證數據
+     * @return array 返回結果數組
+     */
+    public function deleteSmsVerify(int $id, array $merchantData): array
+    {
+        return $this->postRequest("/sms-verify/{$id}", ['_method' => 'DELETE'], $merchantData['auth_key'], $merchantData['auth_token']);
+    }
 }
