@@ -91,11 +91,10 @@ class SmsVerify
      * @return int Number of affected rows
      * @throws PDOException If there is an error with the database query
      */
-    public function update($id, array $data)
+    public function update(array $data)
     {
         // 強制將 id 轉換為整數
-        $id = (int) $id;
-        $params = [':verify_status' => (int) $data['verify_status'], ':verified_at' => $data['verified_at'], ':id' => $id];
+        $params = [':verify_status' => (int) $data['verify_status'], ':verified_at' => $data['verified_at'], ':id' => $data['id']];
         $sql = "UPDATE sms_verify SET verify_status = :verify_status, verified_at = :verified_at WHERE id = :id";
 
         try {
