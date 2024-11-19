@@ -222,7 +222,7 @@ class SmsClient
     }
 
     /**
-     * 發送短信
+     * 發送短信紀錄
      *
      * @param string $content       短信內容
      * @param string $countryCode   國家代碼
@@ -231,7 +231,7 @@ class SmsClient
      * @param int    $smsType       短信類型 (默認為 0)
      * @return array                返回結果數組
      */
-    public function smsSend(string $content, string $countryCode, string $mobile, array $merchantData, int $smsType = 0, int $merchantId, int $regionId, int $status = 1): array
+    public function createSmsSend(string $content, string $countryCode, string $mobile, array $merchantData, int $smsType = 0, int $merchantId, int $regionId, int $status = 1): array
     {
         // 構建請求資料
         $data = [

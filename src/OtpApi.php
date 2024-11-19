@@ -45,7 +45,7 @@ class OtpApi
      * @return array               Array containing the send result and verification data.
      * @throws \Exception          If there is an error during the process.
      */
-    public function executeSms(string $countryCode, string $mobile, int $merchantId, int $regionId, int $smsType = 0, ?string $content = null, int $expiryMinutes = 10): array
+    public function executeSms(string $countryCode, string $mobile, int $merchantId, int $regionId, int $smsType = 0, ?string $content = null, int $expiryMinutes = 10, array $merchantData): array
     {
         // Step 1: Generate a 7-digit verification code
         $verificationCode = $this->smsVerify->generateVerificationCode();
@@ -53,13 +53,27 @@ class OtpApi
         // Step 2: Send the SMS content
         $smsContent = $content ?? "Your verification code is: " . $verificationCode;
 
-        // Step 3: Insert a new record in sms_send
+        // Step 3: Call smsSend method of SmsClient to send SMS
         $status = 0; // 0 for unsent, 1 for sent
-        $smsSendId = $this->smsVerify->insertSmsSend($merchantId, $regionId, $mobile, $smsContent, $status, $smsType);
+        $smsSendResponse = $this->smsClient->createSmsSend($smsContent, $countryCode, $mobile, $merchantData, $smsType, $merchantId, $regionId, $status);
 
-        // Step 4: Insert the verification record in sms_verify with the custom expiry time
+        // Step 4: Check if the SMS was successfully sent
+        if ($smsSendResponse['success']) {
+            $smsSendId = $smsSendResponse['sms_send_id']; // Assuming response contains sms_send_id
+        } else {
+            throw new \Exception('Failed to send SMS');
+        }
+
+        // Step 5: Insert the verification record in sms_verify with the custom expiry time
         $verifyStatus = 0; // 0 indicates unverified
-        $insertId = $this->smsVerify->insert($smsSendId, $verificationCode, $verifyStatus, $expiryMinutes);
+        // Assuming $smsSendResponse contains verification ID or other necessary info, otherwise adjust logic
+        $data = [
+            'sms_send_id' => $smsSendId,
+            'verification_code' => $verificationCode,
+            'verify_status' => $verifyStatus,
+            'expired_at' => $expiredAt,
+        ];
+        $insertId = $this->smsClient->createSmsVerify($data, $merchantData);
 
         return [
             'sms_send_id' => $smsSendId,
