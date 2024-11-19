@@ -220,4 +220,30 @@ class SmsClient
     {
         return $this->postRequest("/sms-verify/{$id}", ['_method' => 'DELETE'], $merchantData['auth_key'], $merchantData['auth_token']);
     }
+
+    /**
+     * 發送短信
+     *
+     * @param string $content       短信內容
+     * @param string $countryCode   國家代碼
+     * @param string $mobile        手機號碼
+     * @param array  $merchantData  商戶驗證數據
+     * @param int    $smsType       短信類型 (默認為 0)
+     * @return array                返回結果數組
+     */
+    public function smsSend(string $content, string $countryCode, string $mobile, array $merchantData, int $smsType = 0, int $merchantId, int $regionId, int $status = 1): array
+    {
+        // 構建請求資料
+        $data = [
+            'merchant_id' => $merchantId, // Add merchant ID
+            'region_id' => $regionId, // Add region ID
+            'mobile' => $mobile, // Mobile number
+            'content' => $content, // SMS content
+            'status' => $status, // Status (default to 1)
+            'sms_type' => $smsType, // SMS type (default to 0)
+        ];
+
+        // 調用發送請求
+        return $this->postRequest('/sms-send', $data, $merchantData['auth_key'], $merchantData['auth_token']);
+    }
 }
