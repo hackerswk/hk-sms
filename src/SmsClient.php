@@ -131,17 +131,25 @@ class SmsClient
      * @return array               API 返回結果
      * @throws \Exception
      */
-    protected function getRequest(string $endpoint, array $params = []): array
+    protected function getRequest(string $endpoint, array $params = [], string $auth_key, string $auth_token): array
     {
+        // 編碼認證資訊
+        $credentials = base64_encode($auth_key . ':' . $auth_token);
+
+        // 拼接完整 URL
         $url = $this->apiUrl . $endpoint . '?' . http_build_query($params);
 
+        // 初始化 cURL
         $ch = curl_init($url);
 
+        // 設置 cURL 選項
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Basic ' . $credentials, // 添加 Authorization 標頭
         ]);
 
+        // 執行請求
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
@@ -151,8 +159,10 @@ class SmsClient
 
         curl_close($ch);
 
+        // 解析返回數據
         $result = json_decode($response, true);
 
+        // 驗證回應
         if ($httpCode !== 200 || !$result || !isset($result['success'])) {
             throw new \Exception('API request failed: ' . ($result['message'] ?? 'Unknown error'));
         }
