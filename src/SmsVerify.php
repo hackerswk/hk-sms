@@ -96,11 +96,12 @@ class SmsVerify
         // 強制將 id 轉換為整數
         $id = (int) $id;
         $setClause = [];
-        $params = [':id' => $id];
+
         foreach ($data as $key => $value) {
             $setClause[] = "$key = :$key";
             $params[":$key"] = $value;
         }
+        $params = [':id' => $id];
         $sql = "UPDATE sms_verify SET " . implode(', ', $setClause) . " WHERE id = :id";
         try {
             $stmt = $this->database->prepare($sql);
