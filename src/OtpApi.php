@@ -45,8 +45,16 @@ class OtpApi
      * @return array               Array containing the send result and verification data.
      * @throws \Exception          If there is an error during the process.
      */
-    public function executeSms(string $countryCode, string $mobile, int $merchantId, int $regionId, int $smsType = 0, ?string $content = null, int $expiryMinutes = 10, array $merchantData): array
-    {
+    public function executeSms(
+        string $countryCode,
+        string $mobile,
+        int $merchantId,
+        int $regionId,
+        array $merchantData,
+        int $smsType = 0,
+        ?string $content = null,
+        int $expiryMinutes = 10
+    ): array {
         // Step 1: Generate a 7-digit verification code
         $verificationCode = $this->smsVerify->generateVerificationCode();
 
@@ -55,7 +63,16 @@ class OtpApi
 
         // Step 3: Call smsSend method of SmsClient to send SMS
         $status = 0; // 0 for unsent, 1 for sent
-        $smsSendResponse = $this->smsClient->createSmsSend($smsContent, $countryCode, $mobile, $merchantData, $smsType, $merchantId, $regionId, $status);
+        $smsSendResponse = $this->smsClient->createSmsSend(
+            $smsContent,
+            $countryCode,
+            $mobile,
+            $merchantData,
+            $smsType,
+            $merchantId,
+            $regionId,
+            $status
+        );
 
         // Step 4: Check if the SMS was successfully sent
         if ($smsSendResponse['success']) {
